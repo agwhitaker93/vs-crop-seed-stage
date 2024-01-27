@@ -5,6 +5,7 @@ using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 using HarmonyLib;
 using System.Reflection;
+using System;
 
 namespace CropSeedStage;
 
@@ -24,6 +25,11 @@ public class CropSeedStageModSystem : ModSystem
         LOGGER.Notification($"{MOD_ID}: Initializing");
         harmony.PatchAll();
         LOGGER.Notification($"{MOD_ID}: Should be done initializing now");
+    }
+
+    public override void Dispose()
+    {
+        harmony.UnpatchAll(MOD_ID);
     }
 
     [HarmonyPostfix]
@@ -50,10 +56,19 @@ public class CropSeedStageModSystem : ModSystem
 
         if (seedStack == null) {
             LOGGER.Notification($"TODO {MOD_ID}: BlockCrop did not have an existing seed drop, adding one anyway");
-            BlockDropItemStack[] droppableStacks = __instance.Drops;
-            // iterate droppableStacks to find seeds
-            // if we find seeds, add a new drop with value 1
-            // otherwise do nothing
+            ItemStack expectedSeedDrop = null;
+            foreach (BlockDropItemStack stack in __instance.Drops)
+            {
+                ItemStack resolvedItemstack = stack.ResolvedItemstack;
+                LOGGER.Notification($"{MOD_ID}: Droppable stack: {resolvedItemStack.Item}");
+                if (resolvedItemstack is ItemPlantableSeed) {
+                    expectedSeedDrop = resolvedItemstack.Clone();
+                }
+            }
+
+            if (expectedSeedDrop != null) {
+
+            }
         }
 
         int currentSeedDrop = seedStack.StackSize;
