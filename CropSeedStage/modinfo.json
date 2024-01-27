@@ -1,13 +1,13 @@
 {
   "type": "code",
   "modid": "cropseedstage",
-  "name": "CropSeedStage",
+  "name": "Crop Seed Stage",
   "authors": [
-    "Unknown"
+    "KoboldRanger"
   ],
-  "description": "To be added",
-  "version": "1.0.1",
+  "description": "Harvest crops a stage early to get more seeds!",
+  "version": "1.0.0",
   "dependencies": {
-    "game": ""
+    "game": "1.19.2"
   }
 }
