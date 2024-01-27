@@ -8,6 +8,6 @@
   "description": "Harvest crops a stage early to get more seeds!",
   "version": "1.0.1",
   "dependencies": {
-    "game": "1.19.2"
+    "game": "1.19.1"
   }
 }
