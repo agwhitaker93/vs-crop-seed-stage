@@ -1,0 +1,51 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      tag: "v${{ fromJson(steps.vars.outputs.modinfo).version }}"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set variables for the run
+        id: vars
+        run: |
+          # https://stackoverflow.com/a/61919791
+          modinfo=`cat ./CropSeedStage/modinfo.json`
+          modinfo="${modinfo//'%'/'%25'}"
+          modinfo="${modinfo//$'\n'/'%0A'}"
+          modinfo="${modinfo//$'\r'/'%0D'}"
+          echo "::set-output name=modinfo::$modinfo"
+      - name: Create tag
+        run: |
+          git config --global user.name "GitHub Actions Agent"
+          git config --global user.email "<>"
+          tagname="v${{ fromJson(steps.vars.outputs.modinfo).version }}"
+          git tag "$tagname"
+          git push --no-verify --tags
+          echo "tag=$tagname" >> "$GITHUB_OUTPUT"
+      - name: Install tools
+        uses: asdf-vm/actions/install@v2
+      - name: Bump modinfo version
+        run: node scripts/bump-version.js
+      - name: Push version bump
+        run: |
+          git config --global user.name "GitHub Actions Agent"
+          git config --global user.email "<>"
+          git commit -am "Bump version [skip ci]"
+          git push --no-verify
+  release:
+    uses: ./.github/workflows/release.yml
+    needs: build
+    with:
+      tag: ${{ needs.build.outputs.tag }}
+    permissions:
+      contents: write
