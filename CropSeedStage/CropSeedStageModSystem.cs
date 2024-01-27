@@ -4,15 +4,17 @@ using Vintagestory.API.Config;
 using Vintagestory.API.Common;
 using Vintagestory.GameContent;
 using HarmonyLib;
+using System.Collections.Generic;
 using System.Reflection;
 using System;
+using System.Linq;
 
 namespace CropSeedStage;
 
 [HarmonyPatch]
 public class CropSeedStageModSystem : ModSystem
 {
-    public static int MAX_SEEDS = 4;
+    public static int MAX_SEED_MULTIPLIER = 4;
     public static string MOD_ID = "KoboldRanger.CropSeedStage";
     public static ILogger LOGGER;
     public static Random RANDOM = new Random();
@@ -56,26 +58,28 @@ public class CropSeedStageModSystem : ModSystem
 
         if (seedStack == null) {
             LOGGER.Notification($"TODO {MOD_ID}: BlockCrop did not have an existing seed drop, adding one anyway");
-            ItemStack expectedSeedDrop = null;
             foreach (BlockDropItemStack stack in __instance.Drops)
             {
-                ItemStack resolvedItemstack = stack.ResolvedItemstack;
+                ItemStack resolvedItemStack = stack.ResolvedItemstack;
                 LOGGER.Notification($"{MOD_ID}: Droppable stack: {resolvedItemStack.Item}");
-                if (resolvedItemstack is ItemPlantableSeed) {
-                    expectedSeedDrop = resolvedItemstack.Clone();
+                if (resolvedItemStack.Item != null && resolvedItemStack.Item is ItemPlantableSeed) {
+                    LOGGER.Notification($"{MOD_ID}: Crop could have dropped a seed, attempting to add one manually");
+                    seedStack = resolvedItemStack.Clone();
+                    seedStack.StackSize = 1;
+                    LOGGER.Notification($"{MOD_ID}: Attempting to create new array");
+                    List<ItemStack> newList = new List<ItemStack>(__result);
+                    newList.Add(seedStack);
+                    LOGGER.Notification($"{MOD_ID}: Hoping reassigning __result doesn't just lose our reference and actually changes it");
+                    __result = newList.ToArray();
                 }
-            }
-
-            if (expectedSeedDrop != null) {
-
             }
         }
 
         int currentSeedDrop = seedStack.StackSize;
-        int maxSeedDrop = currentSeedDrop * MAX_SEEDS;
+        int maxSeedDrop = currentSeedDrop * MAX_SEED_MULTIPLIER;
         // random.Next lower bound is inclusive, upper down is exclusive
-        int newSeedDrop = RANDOM.Next(currentSeedDrop, maxSeedDrop+1);
+        int newSeedDrop = RANDOM.Next(currentSeedDrop, maxSeedDrop + 1);
         seedStack.StackSize = newSeedDrop;
-        LOGGER.Notification($"{MOD_ID}: Doubling stack size from {currentSeedDrop} to {newSeedDrop}");
+        LOGGER.Notification($"{MOD_ID}: Increasing stack size from {currentSeedDrop} to {newSeedDrop}");
     }
 }
