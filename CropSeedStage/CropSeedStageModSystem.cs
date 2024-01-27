@@ -14,6 +14,7 @@ namespace CropSeedStage;
 [HarmonyPatch]
 public class CropSeedStageModSystem : ModSystem
 {
+    public static int MIN_SEEDS = 2;
     public static int MAX_SEED_MULTIPLIER = 4;
     public static string MOD_ID = "KoboldRanger.CropSeedStage";
     //public static ILogger LOGGER;
@@ -78,7 +79,7 @@ public class CropSeedStageModSystem : ModSystem
         int currentSeedDrop = seedStack.StackSize;
         int maxSeedDrop = currentSeedDrop * MAX_SEED_MULTIPLIER;
         // random.Next lower bound is inclusive, upper down is exclusive
-        int newSeedDrop = RANDOM.Next(currentSeedDrop, maxSeedDrop + 1);
+        int newSeedDrop = RANDOM.Next(MIN_SEEDS, maxSeedDrop + 1);
         seedStack.StackSize = newSeedDrop;
         //LOGGER.Notification($"{MOD_ID}: Increasing stack size from {currentSeedDrop} to {newSeedDrop}");
     }
