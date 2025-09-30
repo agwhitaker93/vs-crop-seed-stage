@@ -42,10 +42,10 @@ jobs:
           git config --global user.email "<>"
           git commit -am "Bump version [skip ci]"
           git push --no-verify
-#  release:
-#    uses: ./.github/workflows/release.yml
-#    needs: build
-#    with:
-#      tag: ${{ needs.build.outputs.tag }}
-#    permissions:
-#      contents: write
+  release:
+    uses: ./.github/workflows/release.yml
+    needs: build
+    with:
+      tag: ${{ needs.build.outputs.tag }}
+    permissions:
+      contents: write
