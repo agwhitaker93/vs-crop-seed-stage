@@ -5,7 +5,7 @@
   "name": "Crop Seed Stage",
   "authors": ["KoboldRanger"],
   "description": "Harvest crops a stage early to get more seeds!",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "dependencies": {
     "game": "1.21.0"
   }
