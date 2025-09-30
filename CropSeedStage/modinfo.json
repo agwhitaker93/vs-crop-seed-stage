@@ -1,13 +1,13 @@
 {
-  "type": "code",
+  "$schema": "https://moddbcdn.vintagestory.at/schema/modinfo.latest.json",
+  "type": "Code",
   "modid": "cropseedstage",
   "name": "Crop Seed Stage",
-  "authors": [
-    "KoboldRanger"
-  ],
+  "authors": ["KoboldRanger"],
   "description": "Harvest crops a stage early to get more seeds!",
   "version": "1.0.1",
   "dependencies": {
-    "game": "1.19.1"
+    "game": "1.21.0"
   }
 }
+
