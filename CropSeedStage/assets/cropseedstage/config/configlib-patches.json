@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "file": "CropSeedStageConfig.json",
+  "settings": {
+    "integer": {
+      "MINIMUM_SEEDS": {
+        "name": "MinimumSeeds",
+        "ingui": "cropseedstage:MinimumSeeds",
+        "weight": 1,
+        "comment": "cropseedstage:MinimumSeeds-Comment",
+        "default": 2,
+        "range": {
+          "min": 1,
+          "max": 10
+        }
+      },
+      "MAXIMUM_SEED_MULTIPLIER": {
+        "name": "MaximumSeeds",
+        "ingui": "cropseedstage:MaximumSeeds",
+        "weight": 3,
+        "comment": "cropseedstage:MaximumSeeds-Comment",
+        "default": 4,
+        "range": {
+          "min": 1,
+          "max": 10
+        }
+      }
+    }
+  }
+}

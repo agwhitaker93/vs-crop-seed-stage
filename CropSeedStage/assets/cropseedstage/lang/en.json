@@ -1,3 +1,6 @@
 {
-    "hello": "hello world!"
+    "MinimumSeeds": "Minimum Seeds",
+    "MinimumSeeds-Comment": "The least amount of seeds to drop",
+    "MaximumSeeds": "Maximum Seed Multiplier",
+    "MaximumSeeds-Comment": "Multiply the default seed stack drop size by this, and use it for the maximum amount of seeds that can be dropped"
 }
