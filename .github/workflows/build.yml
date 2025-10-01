@@ -23,7 +23,7 @@ jobs:
           modinfo="${modinfo//'%'/'%25'}"
           modinfo="${modinfo//$'\n'/'%0A'}"
           modinfo="${modinfo//$'\r'/'%0D'}"
-          echo "::set-output name=modinfo::$modinfo"
+          echo "modinfo=${modinfo}" >> $GITHUB_OUTPUT
       - name: Create tag
         run: |
           git config --global user.name "GitHub Actions Agent"

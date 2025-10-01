@@ -15,26 +15,29 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Get tag
-        id: tag
+      - name: Set variables
+        id: vars
         run: |
           if ${{ startsWith(github.ref, 'refs/tags/') }}; then
             # https://unix.stackexchange.com/a/325492
             ref="${{ github.ref }}"
-            echo "::set-output name=tag::${ref##*/}"
+            version_tag=${ref##*/}
           else
-            echo "::set-output name=tag::${{ inputs.tag }}"
+            version_tag=${{ inputs.tag }}
           fi
+          echo "tag=${version_tag}" >> $GITHUB_OUTPUT
+          echo "zipfile=cropseedstage_${version_tag:1}.zip" >> $GITHUB_OUTPUT
       - name: Checkout repository
         uses: actions/checkout@v5
         with:
-          ref: '${{ steps.tag.outputs.tag }}'
+          ref: '${{ steps.vars.outputs.tag }}'
       - name: Install tools
         uses: asdf-vm/actions/install@v4
+      # TODO: needs dotnet
       - name: Build zip
         run: ./build.sh
       - name: Make release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          files: Releases/cropseedstage_${{ steps.tag.outputs.tag}}.zip
+          tag_name: ${{ steps.vars.outputs.tag }}
+          files: Releases/cropseedstage_${{ steps.vars.outputs.zipfile}}.zip
