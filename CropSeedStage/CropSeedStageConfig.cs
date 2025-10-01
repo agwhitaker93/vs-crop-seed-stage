@@ -6,10 +6,19 @@ namespace CropSeedStage;
 public class CropSeedStageConfig
 {
     public int MinimumSeeds = 2;
-    public int MaximumSeedMultiplier = 4;
+    public int MaximumSeeds = 4;
     public bool DebugLogging = false;
 
-    public static CropSeedStageConfig TryLoadConfig(ILogger logger, ICoreAPI api)
+    private static ILogger logger;
+    private static ICoreAPI api;
+
+    public static void Setup(ILogger logger, ICoreAPI api)
+    {
+        CropSeedStageConfig.logger = logger;
+        CropSeedStageConfig.api = api;
+    }
+
+    public static CropSeedStageConfig TryLoadConfig()
     {
         CropSeedStageConfig config;
         try
@@ -23,15 +32,15 @@ public class CropSeedStageConfig
             logger.Error(e);
             config = new CropSeedStageConfig();
         }
-        TrySaveConfig(logger, api, config);
+        config.TrySave();
         return config;
     }
 
-    public static void TrySaveConfig(ILogger logger, ICoreAPI api, CropSeedStageConfig config)
+    public void TrySave()
     {
         try
         {
-            api.StoreModConfig(config, "CropSeedStageConfig.json");
+            api.StoreModConfig(this, "CropSeedStageConfig.json");
         }
         catch (Exception e)
         {
@@ -39,5 +48,4 @@ public class CropSeedStageConfig
             logger.Error(e);
         }
     }
-
 }

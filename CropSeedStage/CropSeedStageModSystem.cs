@@ -21,9 +21,10 @@ public class CropSeedStageModSystem : ModSystem
     {
         Logger = Mod.Logger;
 
-        config = CropSeedStageConfig.TryLoadConfig(Logger, api);
+        CropSeedStageConfig.Setup(Logger, api);
+        config = CropSeedStageConfig.TryLoadConfig();
 
-        Debug($"Loaded config. MinSeeds: {config.MinimumSeeds}, MaxMult: {config.MaximumSeedMultiplier}, Debug: {config.DebugLogging}");
+        Debug($"Loaded config. MinSeeds: {config.MinimumSeeds}, MaxMult: {config.MaximumSeeds}, Debug: {config.DebugLogging}");
 
         harmony = new Harmony(MOD_ID);
         Debug("Initializing");
@@ -40,7 +41,7 @@ public class CropSeedStageModSystem : ModSystem
     {
         if (config.DebugLogging)
         {
-            Logger.Debug(toLog);
+            Logger.Notification(toLog);
         }
     }
 
@@ -75,9 +76,7 @@ public class CropSeedStageModSystem : ModSystem
 
         if (seedStack == null)
         {
-            // Debug(
-            //     "TODO BlockCrop did not have an existing seed drop, adding one anyway"
-            // );
+            Debug("BlockCrop did not have an existing seed drop, adding one anyway");
             foreach (BlockDropItemStack stack in __instance.Drops)
             {
                 ItemStack resolvedItemStack = stack.ResolvedItemstack;
@@ -90,8 +89,7 @@ public class CropSeedStageModSystem : ModSystem
                     seedStack = resolvedItemStack.Clone();
                     seedStack.StackSize = 1;
                     Debug("Attempting to create new array");
-                    List<ItemStack> newList = new List<ItemStack>(__result);
-                    newList.Add(seedStack);
+                    List<ItemStack> newList = [.. __result, seedStack];
                     Debug(
                         "Hoping reassigning __result doesn't just lose our reference and actually changes it"
                     );
@@ -101,9 +99,8 @@ public class CropSeedStageModSystem : ModSystem
         }
 
         int currentSeedDrop = seedStack.StackSize;
-        int maxSeedDrop = currentSeedDrop * config.MaximumSeedMultiplier;
-        // random.Next lower bound is inclusive, upper down is exclusive
-        int newSeedDrop = RANDOM.Next(config.MinimumSeeds, maxSeedDrop + 1);
+        // random.Next lower bound is inclusive, upper bound is exclusive
+        int newSeedDrop = RANDOM.Next(currentSeedDrop * config.MinimumSeeds, currentSeedDrop * config.MaximumSeeds + 1);
         seedStack.StackSize = newSeedDrop;
         Debug($"Increasing stack size from {currentSeedDrop} to {newSeedDrop}");
     }
